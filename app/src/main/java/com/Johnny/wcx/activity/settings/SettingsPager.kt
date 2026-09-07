@@ -329,9 +329,9 @@ fun SettingsPager(onOpenLicense: () -> Unit, onOpenAcknowledgements: () -> Unit)
                 )
                 PrefArrow(
                     title = "GitHub",
-                    summary = "Johnny520/wcx",
+                    summary = "Sumicya/Wself",
                     icon = GitHubIcon,
-                    onClick = { "https://github.com/Johnny520/wcx".toUri().openInSystem(context, true) })
+                    onClick = { "https://github.com/Sumicya/Wself".toUri().openInSystem(context, true) })
                 PrefArrow(
                     title = "TG 群组",
                     summary = "@wcx12138",

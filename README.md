@@ -178,7 +178,7 @@ wcx/
 
 ```bash
 # 克隆项目（含子模块）
-git clone --recursive https://github.com/Johnny520/wcx.git
+git clone --recursive https://github.com/Sumicya/Wself.git
 cd wcx
 
 # 构建 Release 版本
@@ -217,7 +217,7 @@ cd deobf && ./run_deobf.sh
 | 🐙 GitHub 主页 | [https://github.com/Johnny520](https://github.com/Johnny520) |
 | 💬 讨论区 | [https://johnny520.github.io/Johnny/#msg](https://johnny520.github.io/Johnny/#msg) |
 | 📚 项目文档 | [docs/](docs/) |
-| 🐛 提交 Bug | [Issues](https://github.com/Johnny520/wcx/issues) |
+| 🐛 提交 Bug | [Issues](https://github.com/Sumicya/Wself/issues) |
 
 ---
 

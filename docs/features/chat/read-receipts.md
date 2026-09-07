@@ -68,7 +68,7 @@ sudo apt install build-essential pkg-config libssl-dev
 ### 2. 编译与运行
 
 ```bash
-git clone https://github.com/Johnny520/wcx.git
+git clone https://github.com/Sumicya/Wself.git
 cd ./WeKit/contrib/wekit-read-receipts-server
 cargo run --release
 ```

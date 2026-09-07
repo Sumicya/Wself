@@ -11,6 +11,7 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.Johnny.wcx.BuildConfig
 import com.Johnny.wcx.constants.PackageNames
+import com.Johnny.wcx.preferences.WePrefs
 import com.Johnny.wcx.utils.android.getSystemService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -57,13 +58,31 @@ sealed interface UpdateResult {
     data class Error(val cause: Throwable) : UpdateResult
 }
 
-// ─── GitHub Release API ────────────────────────────────────────────────────
+// ─── Configurable update source ─────────────────────────────────────────────
+//
+// Default points at this repository. Forks may change the upstream by setting
+// the WePrefs key `app_update_repo` (e.g. "owner/fork") or disable updates by
+// setting it to an empty string.
 
-private const val GITHUB_API_LATEST =
-    "https://api.github.com/repos/Johnny520/wcx/releases/latest"
-private const val GITHUB_API_RELEASES =
-    "https://api.github.com/repos/Johnny520/wcx/releases?per_page=20"
-private const val RELEASES_PAGE = "https://github.com/Johnny520/wcx/releases"
+const val DEFAULT_UPDATE_REPO = "Sumicya/Wself"
+private const val PREF_UPDATE_REPO = "app_update_repo"
+
+private val updateRepo: String
+    get() = WePrefs.getStringOrDef(PREF_UPDATE_REPO, DEFAULT_UPDATE_REPO)
+        .trim()
+        .removePrefix("https://github.com/")
+        .removePrefix("http://github.com/")
+        .removeSuffix("/")
+        .replace("github.com/", "")
+
+private fun githubApiLatest(): String =
+    "https://api.github.com/repos/$updateRepo/releases/latest"
+
+private fun githubApiReleases(): String =
+    "https://api.github.com/repos/$updateRepo/releases?per_page=20"
+
+private fun releasesPage(): String =
+    "https://github.com/$updateRepo/releases"
 
 // APKs are published per entry-point flavor: app-<flavor>-<abi>-release.apk.
 // Stay on the same flavor the installed build was compiled for.
@@ -81,7 +100,7 @@ private fun selectApkUrl(assets: List<GitHubAsset>): String {
         assets.firstOrNull { it.name == expected }?.let { return it.browser_download_url }
     }
     assets.firstOrNull { it.name.endsWith(UNIVERSAL_APK_SUFFIX) }?.let { return it.browser_download_url }
-    return RELEASES_PAGE
+    return releasesPage()
 }
 
 @Serializable
@@ -136,6 +155,10 @@ object AppUpdater {
      * 兼容 CI 构建版和正式发行版，自动适配不同的 tag 命名
      */
     suspend fun checkForUpdate(): UpdateResult = withContext(Dispatchers.IO) {
+        if (updateRepo.isEmpty()) {
+            // Updates disabled by the user.
+            return@withContext UpdateResult.UpToDate
+        }
         runCatching {
             val release = fetchLatestRelease()
             val updateInfo = parseUpdateInfo(release)
@@ -156,6 +179,9 @@ object AppUpdater {
      * @return 按发布时间倒序排列的 Release 列表，最多 20 个
      */
     suspend fun getReleaseHistory(): Result<List<ReleaseItem>> = withContext(Dispatchers.IO) {
+        if (updateRepo.isEmpty()) {
+            return@withContext Result.success(emptyList())
+        }
         runCatching {
             val releases = fetchAllReleases()
             releases.map { release ->
@@ -195,7 +221,7 @@ object AppUpdater {
 
     private fun fetchLatestRelease(): GitHubRelease {
         val request = Request.Builder()
-            .url(GITHUB_API_LATEST)
+            .url(githubApiLatest())
             .header("Accept", "application/vnd.github.v3+json")
             .build()
         httpClient.newCall(request).execute().use { response ->
@@ -209,7 +235,7 @@ object AppUpdater {
 
     private fun fetchAllReleases(): List<GitHubRelease> {
         val request = Request.Builder()
-            .url(GITHUB_API_RELEASES)
+            .url(githubApiReleases())
             .header("Accept", "application/vnd.github.v3+json")
             .build()
         httpClient.newCall(request).execute().use { response ->

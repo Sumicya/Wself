@@ -619,8 +619,8 @@ class MainActivity : ComponentActivity() {
                 LinkCard(
                     icon = GitHubIcon,
                     title = "GitHub",
-                    subtitle = "Johnny520/wcx",
-                    onClick = { onUrlClick("https://github.com/Johnny520/wcx") }
+                    subtitle = "Sumicya/Wself",
+                    onClick = { onUrlClick("https://github.com/Sumicya/Wself") }
                 )
             }
 

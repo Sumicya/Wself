@@ -4,7 +4,7 @@
 
 ## 反馈渠道
 
-**唯一的反馈渠道是 [GitHub Issues](https://github.com/Johnny520/wcx/issues)。**
+**唯一的反馈渠道是 [GitHub Issues](https://github.com/Sumicya/Wself/issues)。**
 
 请勿通过以下渠道反馈问题, 此类反馈不会被处理:
 
@@ -16,7 +16,7 @@
 
 在提交 Issue 前, 请先确认:
 
-1. **你的问题是否已经有人提过？** 搜索 [已有 Issues](https://github.com/Johnny520/wcx/issues) 和 [常见问题](faq.md) 避免重复提交。
+1. **你的问题是否已经有人提过？** 搜索 [已有 Issues](https://github.com/Sumicya/Wself/issues) 和 [常见问题](faq.md) 避免重复提交。
 2. **你的模块版本是否最新？** 请尝试升级到最新的 [CI 构建](installation.md#下载) 再确认问题是否仍然存在。
 3. **是否排除了其他模块干扰？** 在 LSPosed 中暂时仅勾选 WCX 并重启微信重试, 排除其他 Xposed 模块的冲突。
 4. **是否完整填写了 Issue 模板？** GitHub Issue 模板中的每一项都必须填写, 不要留空或删改。

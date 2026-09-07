@@ -65,4 +65,4 @@
 
 ## 11. 其他问题
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Johnny520/wcx)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Sumicya/Wself)

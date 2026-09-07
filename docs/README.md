@@ -2,7 +2,7 @@
 
 WCX 是一个功能丰富的微信 Xposed 模块, 提供大量微信增强功能, 涵盖聊天体验、界面美化、隐私保护、自动化等多个方面。
 
-[![CI 状态](https://github.com/Johnny520/wcx/actions/workflows/ci.yml/badge.svg)](https://github.com/Johnny520/wcx/actions/workflows/ci.yml)
+[![CI 状态](https://github.com/Sumicya/Wself/actions/workflows/ci.yml/badge.svg)](https://github.com/Sumicya/Wself/actions/workflows/ci.yml)
 
 ## 特色功能
 
@@ -44,7 +44,7 @@ WCX 是一个功能丰富的微信 Xposed 模块, 提供大量微信增强功能
 
 ## 联系
 
-[GitHub 仓库](https://github.com/Johnny520/wcx)
+[GitHub 仓库](https://github.com/Sumicya/Wself)
 
 [Telegram 超级群组](https://t.me/+7j5dJ6g16B43OWVl)
 

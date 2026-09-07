@@ -210,7 +210,11 @@ object CloudFeatureDB {
 
     private fun fetchFromCloud(): Boolean {
         try {
-            val url = URL("$cloudUrl?wechat_version=${HostInfo.versionName}&module_version=${BuildConfig.VERSION_CODE}")
+            val separator = if (cloudUrl.contains('?')) '&' else '?'
+            val url = URL(
+                "$cloudUrl${separator}wechat_version=${HostInfo.versionName}" +
+                    "&module_version=${BuildConfig.VERSION_CODE}"
+            )
             val connection = url.openConnection() as HttpURLConnection
             connection.connectTimeout = 10_000
             connection.readTimeout = 10_000

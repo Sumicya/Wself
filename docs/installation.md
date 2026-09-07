@@ -4,10 +4,10 @@
 
 本项目不会发布稳定版本, 请从以下渠道下载最新 CI 构建产物 (每夜版):
 
-- [GitHub Actions](https://github.com/Johnny520/wcx/actions/workflows/ci.yml)
+- [GitHub Actions](https://github.com/Sumicya/Wself/actions/workflows/ci.yml)
 - [Telegram 超级群组](https://t.me/+7j5dJ6g16B43OWVl)
 
-[GitHub Releases](https://github.com/Johnny520/wcx/releases) 中会发布"稳定的 CI", 但不保证真的稳定, 且可能无法享受最新功能与修复, 故建议使用每夜版。
+[GitHub Releases](https://github.com/Sumicya/Wself/releases) 中会发布"稳定的 CI", 但不保证真的稳定, 且可能无法享受最新功能与修复, 故建议使用每夜版。
 
 ## 安装
 

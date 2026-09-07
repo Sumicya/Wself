@@ -3,7 +3,7 @@
 ## 1. 克隆仓库
 
 ```bash
-git clone https://github.com/Johnny520/wcx.git --recursive
+git clone https://github.com/Sumicya/Wself.git --recursive
 ```
 
 ## 2. 安装系统依赖
