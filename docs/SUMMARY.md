@@ -13,8 +13,8 @@
 
 ## 聊天
 
-* [阻止消息撤回 1](liao-tian/zu-zhi-xiao-xi-che-hui-1.md)
-* [阻止消息撤回 3](liao-tian/zu-zhi-xiao-xi-che-hui-3.md)
+* [防撤回](features/chat/anti-message-recall.md)
+* [一键撤回并重新编辑](features/chat/quick-revoke-and-edit.md)
 * [自动启用发送原图](features/chat/auto-enable-no-compress-on-send-media.md)
 * [自动语音转文字](features/chat/auto-speech-to-text.md)
 * [自动查看原图](features/chat/auto-view-original-media.md)
@@ -28,7 +28,7 @@
 * [显示群成员实名尾字](features/chat/display-group-member-real-names-last-char.md)
 * [显示群成员身份](features/chat/display-group-member-roles.md)
 * [显示消息详情](features/chat/display-message-details.md)
-* [显示消息时间](liao-tian/xian-shi-xiao-xi-shi-jian.md)
+* [消息时间增强](features/chat/message-time-enhancements.md)
 * [表情游戏控制](features/chat/emoji-game-control.md)
 * [爆破群成员实名首字](features/chat/exploit-group-member-real-names-first-char.md)
 * [伪造聊天记录消息](features/chat/fabricate-chat-history-message.md)
@@ -60,7 +60,7 @@
 * [查看群成员消息历史](features/contacts/display-group-member-messages.md)
 * [显示隐藏朋友设置项](features/contacts/display-hidden-contact-settings.md)
 * [隐藏联系人](features/contacts/hide-contacts.md)
-* [退群监控](lian-xi-ren-yu-qun-zu/tui-qun-jian-kong.md)
+* [群成员行为监控](features/chat/monitor-group-member-operations.md)
 * [跳转对话](features/contacts/open-conversation.md)
 * [移除消息批量转发限制](features/contacts/remove-message-batch-forward-limit.md)
 * [圆角头像](features/contacts/round-avatars.md)
