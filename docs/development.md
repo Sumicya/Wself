@@ -34,6 +34,33 @@ $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;$(grep '^ndk' ./gradle/li
 
 建议全文背诵 [停止用 Windows 工作!](https://zhuanlan.fxzhihu.com/p/2024527609388627701)
 
+### D. Android 手机 (Termux)
+
+适合没有电脑、或只做构建验证的场景：
+
+```bash
+pkg update && pkg upgrade
+pkg install git openjdk-21 wget unzip p7zip python -y
+wget https://raw.githubusercontent.com/Willie169/termux-android-sdk-ndk/refs/heads/main/install.sh
+chmod +x install.sh
+./install.sh
+source ~/.bashrc  # 新 shell 可省略
+
+# 验证
+java -version
+echo "$ANDROID_HOME"
+echo "$ANDROID_NDK_ROOT"
+```
+
+`xtask configure` 会自动识别 `ANDROID_NDK_ROOT` / `ANDROID_NDK_HOME`，
+因此可以不用把 NDK 放进 `$ANDROID_HOME/ndk`。
+
+依赖较慢时可用中国镜像：
+
+```bash
+./gradlew -PwekitUseChinaMirror=true assembleStandardRelease
+```
+
 ## 3. 构建
 
 构建期间会自动编译 Rust 原生库, 无须手动编译
