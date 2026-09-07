@@ -18,14 +18,23 @@ fun getGitHash(): String {
     }.standardOutput.asText.get().trim()
 }
 
+// Allow `-PcompileSdk=36 -PtargetSdk=36 -PminSdk=28 -PndkVersion=...` overrides.
+// This is required for constrained environments (Termux, CI kit) where the
+// latest platform/NDK may not be installed yet.
+fun gradleIntProperty(name: String, default: Int): Int =
+    (project.findProperty(name) as? String)?.trim()?.toIntOrNull() ?: default
+
+fun gradleStringProperty(name: String, default: String): String =
+    (project.findProperty(name) as? String)?.trim()?.takeIf { it.isNotBlank() } ?: default
+
 android {
     namespace = libs.versions.namespace.get()
     compileSdk {
-        version = release(libs.versions.compileSdk.get().toInt()) {
-            minorApiLevel = libs.versions.compileSdkMinor.get().toInt()
+        version = release(gradleIntProperty("compileSdk", libs.versions.compileSdk.get().toInt())) {
+            minorApiLevel = gradleIntProperty("compileSdkMinor", libs.versions.compileSdkMinor.get().toInt())
         }
     }
-    ndkVersion = libs.versions.ndk.get()
+    ndkVersion = gradleStringProperty("ndkVersion", libs.versions.ndk.get())
 
     val gitHash = getGitHash()
 
@@ -33,8 +42,8 @@ android {
     // 后续迁移到完整 CI 版本管线时再切换为自动递增。
     defaultConfig {
         applicationId = libs.versions.namespace.get()
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
+        minSdk = gradleIntProperty("minSdk", libs.versions.minSdk.get().toInt())
+        targetSdk = gradleIntProperty("targetSdk", libs.versions.targetSdk.get().toInt())
         versionCode = 247
         versionName = "v247"
 

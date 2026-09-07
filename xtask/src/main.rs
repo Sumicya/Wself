@@ -130,6 +130,12 @@ struct BuildArgs {
     #[arg(long)]
     release: bool,
 
+    /// Skip rebuilding the Rust .so and use the checked-in jniLibs binaries.
+    /// Useful in constrained environments (e.g. Termux) without a Rust
+    /// toolchain or Android NDK.
+    #[arg(long)]
+    no_native: bool,
+
     #[command(flatten)]
     native: NativeArgs,
 }
@@ -440,10 +446,14 @@ fn gradle_variant_task(verb: &str, flavor: Option<&Flavor>, release: bool) -> St
     }
 }
 
-/// Full Android build via the Gradle wrapper (native lib compiled first).
+/// Full Android build via the Gradle wrapper (native lib compiled first unless `--no-native`).
 fn task_build_android(args: &BuildArgs) -> Result<()> {
-    task_configure()?;
-    task_build_native(&args.native.abis)?;
+    if !args.no_native {
+        task_configure()?;
+        task_build_native(&args.native.abis)?;
+    } else {
+        println!("build: skipping native rebuild (--no-native), using jniLibs/*.so");
+    }
     let root = workspace_root();
     let gradle_task = gradle_variant_task("assemble", args.flavor.as_ref(), args.release);
     println!("build: ./gradlew {gradle_task}");

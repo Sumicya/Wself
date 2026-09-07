@@ -12,6 +12,11 @@
 - Rust native lib auto-compiles during build (targets: `app/src/main/rust/wekit-native`). Requires:
   Rust toolchain + Android NDK targets + NDK. `configureCargo` task auto-generates `.cargo/config.toml`
   from NDK.
+- If you do not have a Rust toolchain, use the checked-in `app/src/main/jniLibs/*.so`:
+  `./gradlew assembleStandardRelease` (or `./x build --no-native`). Note `x` still
+  invokes `cargo`, so use `./gradlew` directly if cargo is unavailable.
+- SDK/NDK overrides are supported via `-PcompileSdk`, `-PtargetSdk`, `-PminSdk`,
+  `-PndkVersion` (e.g. `./gradlew -PcompileSdk=36 -PtargetSdk=36 assembleStandardRelease`).
 - AGP 9, Gradle version catalog in `gradle/libs.versions.toml`
 - Maven repos are portable by default. Set a mirror only when needed:
   ```bash

@@ -92,7 +92,9 @@
 | `.gitattributes` / `.gitignore` | 文本行尾标准化；忽略本地配置、签名、构建产物、Rust target | 现代化 |
 | `buildSrc/.../EmbedMonetAssetsTask.java` | 删除未引用任务 | 简化 |
 | `docs/gitbook/` | 删除过期 GitBook 导出，根文档仓库链接指向当前仓库 | 简化 / 自由化 |
-| `xtask/src/main.rs` | `configure` 支持 `ANDROID_NDK_ROOT` / `ANDROID_NDK_HOME`，便于 Termux/独立 NDK | 现代化 |
+| `xtask/src/main.rs` | `configure` 支持 `ANDROID_NDK_ROOT` / `ANDROID_NDK_HOME`；新增 `--no-native` | 现代化 |
+| `app/build.gradle.kts` | 支持 `-PcompileSdk/-PtargetSdk/-PminSdk/-PndkVersion` 覆盖，便于受限环境构建 | 现代化 |
+| `scripts/termux-android-setup.sh` | Termux 一键准备 SDK/NDK/aapt2，走 github.com 的 lzhiyong 包，避免 raw/dl.google | 现代化 / 自由化 |
 | `.gitmodules` | 恢复 `libs/common/bsh` / `libs/common/reflekt` 子模块映射（缺失会导致克隆后无法构建） | 现代化 / 简化 |
 | `docs/development.md` / `README.md` / `AGENTS.md` | 克隆说明改为 `--recurse-submodules`，补充 Termux 构建小节 | 文档 / 现代化 |
 | `docs/refactor/REFACTOR_AUDIT.md` | 本审计与路线图 | 文档 |

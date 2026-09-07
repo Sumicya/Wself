@@ -46,15 +46,15 @@ $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;$(grep '^ndk' ./gradle/li
 ```bash
 pkg update && pkg upgrade
 pkg install git openjdk-21 wget unzip p7zip python -y
-wget https://raw.githubusercontent.com/Willie169/termux-android-sdk-ndk/refs/heads/main/install.sh
-chmod +x install.sh
-./install.sh
-source ~/.bashrc  # 新 shell 可省略
 
 # 拉取仓库时记得带子模块
 git clone --recurse-submodules https://github.com/Sumicya/Wself.git
-# 或对已克隆仓库补拉子模块
-# git -C Wself submodule update --init --recursive
+cd Wself
+
+# 一键准备 Android SDK/NDK/aapt2（走 github.com 的 lzhiyong 包，
+# 不依赖 raw.githubusercontent.com / dl.google.com）
+bash scripts/termux-android-setup.sh
+source ~/.bashrc  # 新 shell 可省略
 
 # 验证
 java -version
@@ -62,14 +62,31 @@ echo "$ANDROID_HOME"
 echo "$ANDROID_NDK_ROOT"
 ```
 
-`xtask configure` 会自动识别 `ANDROID_NDK_ROOT` / `ANDROID_NDK_HOME`，
-因此可以不用把 NDK 放进 `$ANDROID_HOME/ndk`。
-
-依赖较慢时可用中国镜像：
+如果 `github.com` 也慢/不通，可使用镜像再跑脚本：
 
 ```bash
-./gradlew -PwekitUseChinaMirror=true assembleStandardRelease
+GH_MIRROR=https://ghproxy.net/https://github.com bash scripts/termux-android-setup.sh
 ```
+
+### Termux 上的构建
+
+一般不需要重编 Rust（仓库已提交 `app/src/main/jniLibs/*/*.so`），
+所以直接用 Gradle 即可，不必安装 Rust：
+
+```bash
+./gradlew -PcompileSdk=36 -PtargetSdk=36 assembleStandardRelease
+# 若本地只有 android-35：
+./gradlew -PcompileSdk=35 -PtargetSdk=35 assembleStandardRelease
+```
+
+如需重编 Rust 且已安装 Rust + NDK：
+
+```bash
+./x build --release --no-native   # 用已提交的 .so 构建
+cargo xtask build --release      # 重编 Rust + 构建
+```
+
+> `--no-native` 是 `xtask` 新增参数：跳过 Rust 重建，直接使用 `jniLibs` 中已提交的原生库。
 
 ## 3. 构建
 
