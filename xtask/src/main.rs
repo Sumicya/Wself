@@ -22,8 +22,8 @@ use std::{
 /// Matches `minSdk` in libs.versions.toml.
 const MIN_SDK: u32 = 28;
 
-/// Minimum NDK major version accepted by `configure`.  Mirrors the check in
-/// ConfigureCargoTask.kt (`minNdk = 29`).
+/// Minimum NDK major version accepted by `configure` when discovering
+/// `<ANDROID_HOME>/ndk/*` versions.
 const MIN_NDK_MAJOR: u32 = 29;
 
 // ── ABI table ─────────────────────────────────────────────────────────────────
@@ -281,8 +281,17 @@ fn find_android_home(workspace_root: &Path) -> Result<String> {
 
 /// Return the `bin/` path inside the highest qualifying NDK's prebuilt llvm dir.
 ///
-/// Mirrors `findNdkClang` in `buildSrc/src/main/kotlin/ConfigureCargoTask.kt`.
+/// Prefers `ANDROID_NDK_ROOT` / `ANDROID_NDK_HOME` first (common in Termux and
+/// standalone NDK installers), then falls back to `<ANDROID_HOME>/ndk/*`.
 fn find_ndk_bin_dir(android_home: &str) -> Result<String> {
+    for var in ["ANDROID_NDK_ROOT", "ANDROID_NDK_HOME"] {
+        if let Ok(value) = env::var(var) {
+            if !value.is_empty() {
+                return resolve_ndk_bin_dir(&PathBuf::from(value));
+            }
+        }
+    }
+
     let ndk_root = PathBuf::from(android_home).join("ndk");
     if !ndk_root.exists() {
         bail!("NDK directory not found: {}", ndk_root.display());
@@ -317,8 +326,14 @@ fn find_ndk_bin_dir(android_home: &str) -> Result<String> {
 
     // Pick the highest version (lexicographic on version part tuples).
     candidates.sort_by(|a, b| a.0.cmp(&b.0));
-    let (_, ndk_dir) = candidates.pop().unwrap();
+    resolve_ndk_bin_dir(&candidates.pop().unwrap().1)
+}
 
+/// Resolve `<ndk_dir>/toolchains/llvm/prebuilt/<host>/bin` for the current host.
+fn resolve_ndk_bin_dir(ndk_dir: &Path) -> Result<String> {
+    if !ndk_dir.exists() {
+        bail!("NDK directory not found: {}", ndk_dir.display());
+    }
     let host = host_prebuilt_tag()?;
     let bin_dir = ndk_dir
         .join("toolchains/llvm/prebuilt")

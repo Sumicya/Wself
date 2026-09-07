@@ -92,6 +92,7 @@
 | `.gitattributes` / `.gitignore` | 文本行尾标准化；忽略本地配置、签名、构建产物、Rust target | 现代化 |
 | `buildSrc/.../EmbedMonetAssetsTask.java` | 删除未引用任务 | 简化 |
 | `docs/gitbook/` | 删除过期 GitBook 导出，根文档仓库链接指向当前仓库 | 简化 / 自由化 |
+| `xtask/src/main.rs` | `configure` 支持 `ANDROID_NDK_ROOT` / `ANDROID_NDK_HOME`，便于 Termux/独立 NDK | 现代化 |
 | `docs/refactor/REFACTOR_AUDIT.md` | 本审计与路线图 | 文档 |
 
 ---
@@ -135,6 +136,8 @@ cd Wself
 
 > ⚠️ Termux 的 NDK/compileSdk 与宿主机可能有差异；`compileSdk 37`/`targetSdk 37` 可能需要在
 > `sdkmanager --install "platforms;android-37"` 或降级到本机可用版本后重试。
+> `xtask configure` 现在也识别 `ANDROID_NDK_ROOT` / `ANDROID_NDK_HOME`，便于 Termux 等独立
+> NDK 安装器使用。
 > `app/src/main/jniLibs/*/*.so` 为已提交的 native 二进制，若不重建 Rust 也可直接走 Gradle 构建。
 
 ---
