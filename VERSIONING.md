@@ -1,54 +1,39 @@
 # Versioning
 
-WCX does not use semantic versioning. The module is distributed as CI-built artifacts
-with a deterministic, git-derived version scheme. There are no manual version bumps or release
-branches.
+WCX does not use semantic versioning. The module is distributed as CI-built artifacts.
 
-## Module Version
+## Current (explicit baseline)
 
-Both values are computed at build time in `app/build.gradle.kts`.
+The current checkout uses an **explicit baseline** because the repository was
+snapshot-flattened (single/historical commit), so a git-derived auto version
+would regress on such checkouts.
 
-| Field         | Source                                                                                             | Example       |
-|---------------|----------------------------------------------------------------------------------------------------|---------------|
-| `versionCode` | `(git rev-list --count HEAD) + versionBaseOffset` — commit count + baseline offset                  | `174`         |
-| `versionName` | `"v" + versionCode` — auto-generated from versionCode                                              | `v174`        |
+| Field         | Source                                                                        | Example |
+|---------------|-------------------------------------------------------------------------------|---------|
+| `versionCode` | Hardcoded in `app/build.gradle.kts` (`defaultConfig.versionCode`)             | `247`   |
+| `versionName` | Hardcoded in `app/build.gradle.kts` (`defaultConfig.versionName`)             | `v247`  |
+| `COMMIT_HASH` | Computed at build time (`git rev-parse --short HEAD`)                         | `a123bff` |
+| `TAG`         | Always `"WCX"`                                                               | `WCX`   |
+| `BUILD_TIMESTAMP` | `System.currentTimeMillis()` at build time                                 | (epoch) |
 
-- `versionBaseOffset` ensures the versionCode never falls below the baseline (v174 = offset 26 from v148).
-- `versionCode` monotonically increases with every commit.
-- `versionName` is derived from versionCode, not commit hash.
-- Neither is manually edited; they are fully automated.
+These values are embedded in `BuildConfig` and must be manually bumped alongside
+a release. `app/build.gradle.kts` intentionally removed the old
+`getCommitCount()` / `versionBaseOffset` logic because it was unused and
+inconsistent with the actual `versionCode`.
 
-The APK also embeds these in `BuildConfig`:
+## Planned (auto version)
 
-- `BuildConfig.COMMIT_HASH` — short commit hash
-- `BuildConfig.TAG` — always `"WCX"`
-- `BuildConfig.BUILD_TIMESTAMP` — `System.currentTimeMillis()` at build time
+Once the repository is a normal, full-history git repo (or CI is configured to
+inject the version), migrate to a deterministic git-derived scheme:
+
+- `versionCode` = `(git rev-list --count HEAD) + baseOffset`
+- `versionName` = `"v" + versionCode`
+
+Do this in the same commit that restores full history or adds an explicit CI
+`--versionCode` override.
 
 ## Release Model
 
-There are **no stable releases**. The project uses a continuous delivery approach:
-
-- **Every push to `master`** triggers CI, which builds signed release APKs and publishes them.
-- GitHub Releases contains a **single rolling "CI" prerelease** — overwritten each build.
-- `stable-ci-N` tags (e.g., `stable-ci-6`) are occasional manual checkpoints, not regularly
-  maintained.
-
-| Artifact                  | Channel                  | Update Frequency       |
-|---------------------------|--------------------------|------------------------|
-| APK (per-ABI + universal) | GitHub Actions, Telegram | Every push to `master` |
-| `update.json`             | GitHub CI Release        | Every push to `master` |
-
-### update.json
-
-Generated in CI:
-
-```json
-{
-  "versionCode": 174,
-  "versionName": "v174",
-  "commit": "2bbf8a8"
-}
-```
-
-Consumed by the module's built-in update checker. Fields mirror the build-time version
-identifiers.
+- Rolling "CI" prerelease on GitHub Releases, overwritten per build.
+- `stable-ci-N` tags are occasional manual checkpoints.
+- `update.json` generated in CI mirrors the installed `versionCode` / `versionName`.
