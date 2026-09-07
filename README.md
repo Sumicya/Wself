@@ -178,7 +178,7 @@ wcx/
 
 ```bash
 # 克隆项目（含子模块）
-git clone --recursive https://github.com/Sumicya/Wself.git
+git clone --recurse-submodules https://github.com/Sumicya/Wself.git
 cd wcx
 
 # 构建 Release 版本

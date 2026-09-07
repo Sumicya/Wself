@@ -3,8 +3,13 @@
 ## 1. 克隆仓库
 
 ```bash
-git clone https://github.com/Sumicya/Wself.git --recursive
+git clone --recurse-submodules https://github.com/Sumicya/Wself.git
+# 如果你已经克隆但没拉子模块：
+# cd Wself && git submodule update --init --recursive
 ```
+
+> `libs/common/bsh` 与 `libs/common/reflekt` 是指向
+> `Ujhhgtg/bsh` 与 `Ujhhgtg/reflekt` 的子模块，缺少它们无法编译。
 
 ## 2. 安装系统依赖
 
@@ -45,6 +50,11 @@ wget https://raw.githubusercontent.com/Willie169/termux-android-sdk-ndk/refs/hea
 chmod +x install.sh
 ./install.sh
 source ~/.bashrc  # 新 shell 可省略
+
+# 拉取仓库时记得带子模块
+git clone --recurse-submodules https://github.com/Sumicya/Wself.git
+# 或对已克隆仓库补拉子模块
+# git -C Wself submodule update --init --recursive
 
 # 验证
 java -version
