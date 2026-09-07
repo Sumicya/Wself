@@ -19,6 +19,8 @@
   ./gradlew -PwekitUseChinaMirror=true
   ```
   (env `WEKIT_LOCAL_MAVEN_MIRROR` also works for the local mirror.)
+- The Gradle wrapper uses the official `services.gradle.org` distribution. If you need a
+  mirror, edit `gradle/wrapper/gradle-wrapper.properties` in your checkout only.
 
 ## Project Structure
 

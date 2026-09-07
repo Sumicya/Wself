@@ -1,0 +1,12 @@
+# Normalize text line endings for a portable, cross-platform checkout.
+* text=auto
+
+# Keep binary artifacts binary.
+*.png binary
+*.jpg binary
+*.webp binary
+*.gif binary
+*.so binary
+*.jar binary
+*.keystore binary
+*.jks binary

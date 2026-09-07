@@ -214,20 +214,6 @@ androidComponents {
             embedEruda,
             EmbedErudaTask::getOutputDir
         )
-
-//        val embedMonetAssets = tasks.register<EmbedMonetAssetsTask>("embedMonetAssets$variantName") {
-//            group = "wekit"
-//            description = "Embed Monet overlay templates/tables as byte-array constants for $variantName"
-//
-//            inputDir.set(layout.projectDirectory.dir("embedded/monet"))
-//            outputDir.set(layout.buildDirectory.dir("generated/source/monet/${variant.name}"))
-//            namespace.set(libs.versions.namespace.get())
-//        }
-//
-//        kotlinSources.addGeneratedSourceDirectory(
-//            embedMonetAssets,
-//            EmbedMonetAssetsTask::outputDir
-//        )
     }
 }
 
@@ -295,10 +281,6 @@ dependencies {
     implementation(project(":libs:common:reflekt"))
     implementation(libs.libsu.core)
     implementation(libs.dexmaker)
-//    implementation(libs.arsclib)
-//    implementation(libs.apksig)
-//    implementation(libs.bouncycastle.prov)
-//    implementation(libs.bouncycastle.pkix)
     @Suppress("AvoidDuplicateDependencies")
     implementation(project(":libs:common:annotation-scanner"))
     @Suppress("AvoidDuplicateDependencies")
@@ -343,13 +325,6 @@ dependencies {
 // markwon conflict
 configurations.all {
     exclude(group = "org.jetbrains", module = "annotations-java5")
-
-//    resolutionStrategy {
-//        force("androidx.compose.ui:ui:1.12.0-beta01")
-//        force("androidx.compose.ui:ui-android:1.12.0-beta01")
-//        force("androidx.compose.material3:material3:1.5.0-alpha21")
-//        force("androidx.compose.material3:material3-android:1.5.0-alpha21")
-//    }
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

@@ -30,9 +30,4 @@ object Preferences {
 
     // ALWAYS check whether sender is group chat!!!
     var matchGenericWxIdExp by prefOption(MATCH_GENERIC_WXID_EXP, true)
-
-    // use this when Google fucked up itself again
-//    var useActivityInsteadOfDialog: Boolean
-//        get() = false
-//        set(value) { WePrefs.putBool(USE_ACTIVITY_INSTEAD_OF_DIALOG, value) }
 }
