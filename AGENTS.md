@@ -8,11 +8,17 @@
 # (./x is alias to `cargo xtask` which orchestrates the build process)
 ```
 
-- JDK 21
+- JDK 21 (via `JAVA_HOME`/Gradle toolchain; no machine-specific JDK path is committed)
 - Rust native lib auto-compiles during build (targets: `app/src/main/rust/wekit-native`). Requires:
   Rust toolchain + Android NDK targets + NDK. `configureCargo` task auto-generates `.cargo/config.toml`
   from NDK.
 - AGP 9, Gradle version catalog in `gradle/libs.versions.toml`
+- Maven repos are portable by default. Set a mirror only when needed:
+  ```bash
+  ./gradlew -PwekitLocalMavenMirror=/path/to/mirror
+  ./gradlew -PwekitUseChinaMirror=true
+  ```
+  (env `WEKIT_LOCAL_MAVEN_MIRROR` also works for the local mirror.)
 
 ## Project Structure
 

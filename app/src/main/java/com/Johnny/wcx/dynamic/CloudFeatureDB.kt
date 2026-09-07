@@ -1,5 +1,7 @@
 package com.Johnny.wcx.dynamic
 
+import com.Johnny.wcx.BuildConfig
+import com.Johnny.wcx.preferences.WePrefs
 import com.Johnny.wcx.utils.HostInfo
 import com.Johnny.wcx.utils.WeLogger
 import com.Johnny.wcx.utils.fs.KnownPaths
@@ -13,23 +15,41 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 /**
- * 云端轻量特征库 — 自动增量更新识别规则，无需更新模块安装包。
+ * 可自由配置的轻量特征库 — 自动增量更新识别规则，无需更新模块安装包。
  *
- * 云端仅同步微信新版特征识别规则（不用更新模块安装包），
- * 模块每次联网自动拉取最新识别模板，提前适配还未发布的微信版本改动。
+ * 云端特征库默认关闭。模块不再硬编码任何远程服务器，使用方可以：
+ *  1. 完全不联网，只依赖本地/动态适配能力；
+ *  2. 配置自建、私有或自托管特征库地址（`WePrefs` 键 `cloud_feature_db_url`）；
+ *  3. 用自己的更新周期（`cloud_feature_db_update_interval_ms`，毫秒）。
  *
  * 缓存策略：
  * - 本地缓存已下载的特征规则
- * - 每次启动检查云端更新
+ * - 每次启动检查云端更新（仅当配置了云端地址）
  * - 增量更新，仅下载变更部分
  */
 object CloudFeatureDB {
 
     private const val TAG = "CloudFeatureDB"
-    private const val CLOUD_URL = "https://wcx-features.example.com/api/v1/features"
+
+    /** 自托管/私有特征库地址；空 = 禁用云同步。 */
+    private const val DEFAULT_CLOUD_URL = ""
+    private const val PREF_CLOUD_URL = "cloud_feature_db_url"
+
+    /** 云端更新检查间隔（毫秒），默认 1 小时。 */
+    private const val DEFAULT_UPDATE_INTERVAL_MS = 3_600_000L
+    private const val PREF_UPDATE_INTERVAL_MS = "cloud_feature_db_update_interval_ms"
+
     private const val CACHE_FILE = "cloud_features.json"
     private const val CACHE_META = "cloud_features_meta.json"
-    private const val UPDATE_INTERVAL_MS = 3_600_000L // 1小时
+
+    private val cloudUrl: String
+        get() = WePrefs.getStringOrDef(PREF_CLOUD_URL, DEFAULT_CLOUD_URL).trim()
+
+    private val cloudSyncEnabled: Boolean
+        get() = cloudUrl.isNotEmpty()
+
+    private val updateIntervalMs: Long
+        get() = WePrefs.getLongOrDef(PREF_UPDATE_INTERVAL_MS, DEFAULT_UPDATE_INTERVAL_MS)
 
     data class CloudClassFeature(
         val id: String,
@@ -62,7 +82,11 @@ object CloudFeatureDB {
     fun init(weChatVersion: String) {
         currentWeChatVersion = weChatVersion
         loadLocalCache()
-        checkForUpdates()
+        if (cloudSyncEnabled) {
+            checkForUpdates()
+        } else {
+            WeLogger.i(TAG, "cloud feature sync disabled (no URL configured), using local features only")
+        }
     }
 
     /**
@@ -90,8 +114,13 @@ object CloudFeatureDB {
      * 检查云端更新。
      */
     fun checkForUpdates(): Boolean {
+        if (!cloudSyncEnabled) {
+            WeLogger.d(TAG, "checkForUpdates skipped: cloud feature sync disabled")
+            return false
+        }
+
         val now = System.currentTimeMillis()
-        if (now - lastUpdateTime < UPDATE_INTERVAL_MS && features.isNotEmpty()) {
+        if (now - lastUpdateTime < updateIntervalMs && features.isNotEmpty()) {
             WeLogger.d(TAG, "skip update check, last update was ${(now - lastUpdateTime) / 1000}s ago")
             return false
         }
@@ -105,9 +134,14 @@ object CloudFeatureDB {
     }
 
     /**
-     * 强制从云端拉取最新特征库。
+     * 强制从云端拉取最新特征库。未配置云端地址时直接返回 false。
      */
     fun forceUpdate(): Boolean {
+        if (!cloudSyncEnabled) {
+            WeLogger.w(TAG, "forceUpdate skipped: cloud feature sync disabled")
+            return false
+        }
+
         return try {
             fetchFromCloud()
         } catch (e: Exception) {
@@ -176,7 +210,7 @@ object CloudFeatureDB {
 
     private fun fetchFromCloud(): Boolean {
         try {
-            val url = URL("$CLOUD_URL?wechat_version=${HostInfo.versionName}&module_version=${HostInfo.versionName}")
+            val url = URL("$cloudUrl?wechat_version=${HostInfo.versionName}&module_version=${BuildConfig.VERSION_CODE}")
             val connection = url.openConnection() as HttpURLConnection
             connection.connectTimeout = 10_000
             connection.readTimeout = 10_000

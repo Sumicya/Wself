@@ -12,12 +12,6 @@ plugins {
     alias(libs.plugins.aboutlibraries.android)
 }
 
-fun getCommitCount(): Int {
-    return providers.exec {
-        commandLine("git", "rev-list", "--count", "HEAD")
-    }.standardOutput.asText.get().trim().toInt()
-}
-
 fun getGitHash(): String {
     return providers.exec {
         commandLine("git", "rev-parse", "--short", "HEAD")
@@ -33,13 +27,10 @@ android {
     }
     ndkVersion = libs.versions.ndk.get()
 
-    val commitCount = getCommitCount()
     val gitHash = getGitHash()
 
-    // v194 基线：commitCount 基于 v148，偏移 +26
-    // 后续每增加一个 commit，versionCode 自动递增
-    val versionBaseOffset = 30  // v210 连号起点（commit 180+30=210，下次 commit 181+30=211）
-
+    // 当前版本号采用显式基线，避免在浅克隆/分叉仓库中因 commit 计数被压缩而回退。
+    // 后续迁移到完整 CI 版本管线时再切换为自动递增。
     defaultConfig {
         applicationId = libs.versions.namespace.get()
         minSdk = libs.versions.minSdk.get().toInt()
@@ -164,11 +155,9 @@ android {
         )
     }
 
-    @Suppress("UnstableApiUsage")
-    androidResources {
-        localeFilters += setOf("zh")
-    }
-
+    // Keep every configured locale/string resource. Do not force a single
+    // Chinese-only locale: this lets the module be adapted and translated
+    // freely by downstream forks.
     buildFeatures {
         resValues = false
         compose = true
